@@ -679,7 +679,7 @@ void DFGUICmdHandlerDCC::dfgDoRemovePort(
   FabricCore::DFGBinding const &binding,
   QString execPath,
   FabricCore::DFGExec const &exec,
-  QString portName
+  QStringList portNames
   )
 {
   std::string cmdName(FabricUI::DFG::DFGUICmd_RemovePort::CmdName());
@@ -687,7 +687,7 @@ void DFGUICmdHandlerDCC::dfgDoRemovePort(
 
   args.push_back(getDCCObjectNameFromBinding(binding));
   args.push_back(ToStdString(execPath));
-  args.push_back(ToStdString(portName));
+  args.push_back(EncodeNames(portNames));
 
   std::string output;
   execDFGCmdViaDCC(cmdName, args, output);
@@ -2061,14 +2061,16 @@ FabricUI::DFG::DFGUICmd_RemovePort *DFGUICmdHandlerDCC::createAndExecuteDFGComma
     if (!DecodeExec(args, ai, binding, execPath, exec))
       return cmd;
 
-    QString portName;
-    if (!DecodeName(args, ai, portName))
+    QString portNamesString;
+    QStringList portNames;
+    if (!DecodeNames(args, ai, portNamesString, portNames))
       return cmd;
+
 
     cmd = new FabricUI::DFG::DFGUICmd_RemovePort(binding,
                                                  execPath,
                                                  exec,
-                                                 portName);
+                                                 portNames);
     try
     {
       cmd->doit();
