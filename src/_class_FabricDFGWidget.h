@@ -30,6 +30,8 @@ class FabricDFGWidget : public DFG::DFGCombinedWidget
 
   static FabricDFGWidget *getWidgetforBaseInterface(BaseInterface *in_baseInterface, bool createNewIfNoneFound = false, bool callRefreshGraph = false);
 
+  virtual void keyPressEvent(QKeyEvent *event);
+
  public slots:
   virtual void onUndo();
   virtual void onRedo();

@@ -140,6 +140,20 @@ FabricDFGWidget *FabricDFGWidget::getWidgetforBaseInterface(BaseInterface *in_ba
   }
 }
 
+void FabricDFGWidget::keyPressEvent(QKeyEvent *event)
+{
+  if (event->modifiers() == Qt::NoModifier)
+  {
+    Qt::Key key = (Qt::Key)event->key();
+    if (key != Qt::Key_Escape)
+    {
+      event->accept();
+      return;
+    }
+  }
+  DFG::DFGCombinedWidget::keyPressEvent(event);
+}
+
 void FabricDFGWidget::onUndo()
 {
   std::string               err;
