@@ -164,6 +164,13 @@ static inline std::string EncodeYPoss( QList<QPointF> poss )
   return yPosSS.str();
 }
 
+static inline void EncodeBoolean(bool boolean, std::vector<std::string> &args)
+{
+  std::stringstream ss;
+  ss << (boolean? "true": "false");
+  args.push_back(ss.str());
+}
+
 static inline void EncodePosition(QPointF const &position, std::vector<std::string> &args)
 {
   {
@@ -190,6 +197,12 @@ static inline void EncodeSize(QSizeF const &size, std::vector<std::string> &args
     ss << size.height();
     args.push_back(ss.str());
   }
+}
+
+static inline bool DecodeBoolean(std::vector<std::string> const &args, unsigned &ai, bool &value)
+{
+  value = args[ai++] == "true";
+  return true;
 }
 
 static inline bool DecodeString(std::vector<std::string> const &args, unsigned &ai, QString &value)
@@ -639,7 +652,8 @@ QString DFGUICmdHandlerDCC::dfgDoCreatePreset(
   FabricCore::DFGExec const &exec,
   QString nodeName,
   QString presetDirPath,
-  QString presetName
+  QString presetName,
+  bool updateOrigPreset
   )
 {
   std::string cmdName(FabricUI::DFG::DFGUICmd_CreatePreset::CmdName());
@@ -650,6 +664,7 @@ QString DFGUICmdHandlerDCC::dfgDoCreatePreset(
   args.push_back(ToStdString(nodeName));
   args.push_back(ToStdString(presetDirPath));
   args.push_back(ToStdString(presetName));
+  EncodeBoolean(updateOrigPreset, args);
 
   QString result;
   execCmd(cmdName, args, result);
@@ -1980,12 +1995,17 @@ FabricUI::DFG::DFGUICmd_CreatePreset *DFGUICmdHandlerDCC::createAndExecuteDFGCom
     if (!DecodeString(args, ai, presetName))
       return cmd;
 
+    bool updateOrigPreset;
+    if (!DecodeBoolean(args, ai, updateOrigPreset))
+      return cmd;
+
     cmd = new FabricUI::DFG::DFGUICmd_CreatePreset(binding,
                                                    execPath,
                                                    exec,
                                                    nodeName,
                                                    presetDirPath,
-                                                   presetName);
+                                                   presetName,
+                                                   updateOrigPreset);
     try
     {
       cmd->doit();
