@@ -22,7 +22,7 @@ void FabricCanvasLogVersion::Command::cmd_Execute(unsigned flags)
   try
   {
     char s[1024];
-    snprintf(s, sizeof(s), "plugin v. %.3f  /  core v. %s", FABRICMODO_PLUGIN_VERSION, FabricCore::GetVersionStr());
+    snprintf(s, sizeof(s), "plugin v. %.3f  /  core v. %s", FABRICMODO_PLUGIN_VERSION, FabricCore::GetVersionWithBuildInfoStr());
     feLog(s);
   }
   catch (FabricCore::Exception e)
