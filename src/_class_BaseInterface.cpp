@@ -107,6 +107,7 @@ BaseInterface::BaseInterface()
     // create an empty binding
     m_binding = s_host.createBindingToNewGraph();
     m_binding.setNotificationCallback(bindingNotificationCallback, this);
+    m_binding.setMetadata("host_app", "Modo", false);
 
     // command handler.
     m_cmdHandler = new DFGUICmdHandlerDCC(this);
@@ -257,6 +258,7 @@ void BaseInterface::setFromJSON(const std::string & json)
   {
     m_binding = s_host.createBindingFromJSON(json.c_str());
     m_binding.setNotificationCallback(bindingNotificationCallback, this);
+    m_binding.setMetadata("host_app", "Modo", false);
   }
   catch (FabricCore::Exception e)
   {
