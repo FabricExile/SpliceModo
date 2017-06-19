@@ -147,7 +147,7 @@ BaseInterface::~BaseInterface()
           // [FE-5802] only remove the singleton objects
           // instead of destroying the client entirely.
           FabricCore::RTVal handleVal = FabricCore::RTVal::Construct(s_client, "SingletonHandle", 0, NULL);
-          handleVal.callMethod("", "removeAllObjects", 0, NULL);
+          handleVal.callMethod("", "onNewScene", 0, NULL);
         }
         else
         {
