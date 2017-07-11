@@ -21,6 +21,9 @@ Import(
   )
 
 env = parentEnv.Clone()
+if FABRIC_BUILD_OS == 'Darwin':
+  for var in ['CCFLAGS', 'CXXFLAGS']:
+    env[var] = filter(lambda opt: opt not in ['-Werror'], env[var])
 
 qtMOCBuilder = Builder(
   action = [[os.path.join(MODO_BIN_DIR, 'moc'), '-o', '$TARGET', '$SOURCE']],
