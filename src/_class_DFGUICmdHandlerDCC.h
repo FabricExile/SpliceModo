@@ -343,6 +343,25 @@ protected:
     QString metaData
     );
 
+  virtual QString dfgDoAddNLSPort(
+    FabricCore::DFGBinding const &binding,
+    QString execPath,
+    FabricCore::DFGExec const &exec,
+    QString desiredPortName,
+    QString typeSpec,
+    QString portToConnect,
+    QString extDep,
+    QString metaData
+    );
+
+  virtual void dfgDoReorderNLSPorts(
+    FabricCore::DFGBinding const &binding,
+    QString execPath,
+    FabricCore::DFGExec const &exec,
+    QString itemPath,
+    QList<int> indices
+    );
+
 protected:
     
   std::string getDCCObjectNameFromBinding(FabricCore::DFGBinding const &binding);
@@ -388,6 +407,8 @@ public:
   static FabricUI::DFG::DFGUICmd_DismissLoadDiags     *createAndExecuteDFGCommand_DismissLoadDiags     (std::vector<std::string> &args);
   static FabricUI::DFG::DFGUICmd_AddBlock             *createAndExecuteDFGCommand_AddBlock             (std::vector<std::string> &args);
   static FabricUI::DFG::DFGUICmd_AddBlockPort         *createAndExecuteDFGCommand_AddBlockPort         (std::vector<std::string> &args);
+  static FabricUI::DFG::DFGUICmd_AddNLSPort           *createAndExecuteDFGCommand_AddNLSPort           (std::vector<std::string> &args);
+  static FabricUI::DFG::DFGUICmd_ReorderNLSPorts      *createAndExecuteDFGCommand_ReorderNLSPorts      (std::vector<std::string> &args);
 };
 
 class UndoDFGUICmd : public CLxImpl_Undo
@@ -709,6 +730,22 @@ public:
       else if (doWhat == doWhatIDs_DELETE) { delete ((T *)cmd);
                                              cmd = NULL; }
     }
+    else if (cmdName == FabricUI::DFG::DFGUICmd_AddNLSPort         ::CmdName().c_str())
+    { typedef           FabricUI::DFG::DFGUICmd_AddNLSPort T;
+      if      (doWhat == doWhatIDs_DOIT)   ((T *)cmd)->doit();
+      else if (doWhat == doWhatIDs_UNDO)   ((T *)cmd)->undo();
+      else if (doWhat == doWhatIDs_REDO)   ((T *)cmd)->redo();
+      else if (doWhat == doWhatIDs_DELETE) { delete ((T *)cmd);
+                                             cmd = NULL; }
+    }
+    else if (cmdName == FabricUI::DFG::DFGUICmd_ReorderNLSPorts    ::CmdName().c_str())
+    { typedef           FabricUI::DFG::DFGUICmd_ReorderNLSPorts T;
+      if      (doWhat == doWhatIDs_DOIT)   ((T *)cmd)->doit();
+      else if (doWhat == doWhatIDs_UNDO)   ((T *)cmd)->undo();
+      else if (doWhat == doWhatIDs_REDO)   ((T *)cmd)->redo();
+      else if (doWhat == doWhatIDs_DELETE) { delete ((T *)cmd);
+                                             cmd = NULL; }
+    }
   }
 };
 
@@ -933,6 +970,18 @@ public:
 
 #define __CanvasCmdClass__   FabricCanvasAddBlockPort
 #define __CanvasCmdName__    FabricUI::DFG::DFGUICmd_AddBlockPort::CmdName()
+        __CanvasCmd__
+#undef  __CanvasCmdClass__
+#undef  __CanvasCmdName__
+
+#define __CanvasCmdClass__   FabricCanvasAddNLSPort
+#define __CanvasCmdName__    FabricUI::DFG::DFGUICmd_AddNLSPort::CmdName()
+        __CanvasCmd__
+#undef  __CanvasCmdClass__
+#undef  __CanvasCmdName__
+
+#define __CanvasCmdClass__   FabricCanvasReorderNLSPorts
+#define __CanvasCmdName__    FabricUI::DFG::DFGUICmd_ReorderNLSPorts::CmdName()
         __CanvasCmd__
 #undef  __CanvasCmdClass__
 #undef  __CanvasCmdName__

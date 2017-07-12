@@ -1189,6 +1189,65 @@ QString DFGUICmdHandlerDCC::dfgDoAddBlockPort(
   return result;
 }
 
+QString DFGUICmdHandlerDCC::dfgDoAddNLSPort(
+  FabricCore::DFGBinding const &binding,
+  QString execPath,
+  FabricCore::DFGExec const &exec,
+  QString desiredPortName,
+  FabricCore::DFGPortType portType,
+  QString typeSpec,
+  QString portToConnect,
+  QString extDep,
+  QString uiMetadata
+  )
+{
+  std::string cmdName(FabricUI::DFG::DFGUICmd_AddNLSPort::CmdName());
+  std::vector<std::string> args;
+
+  args.push_back(getDCCObjectNameFromBinding(binding));
+  args.push_back(ToStdString(execPath));
+  args.push_back(ToStdString(desiredPortName));
+  args.push_back(ToStdString(typeSpec));
+  args.push_back(ToStdString(portToConnect));
+  args.push_back(ToStdString(extDep));
+  args.push_back(ToStdString(uiMetadata));
+
+  QString result;
+  execCmd(cmdName, args, result);
+  return result;
+}
+
+void DFGUICmdHandlerDCC::dfgDoReorderNLSPorts(
+  FabricCore::DFGBinding const &binding,
+  QString execPath,
+  FabricCore::DFGExec const &exec,
+  QString itemPath,
+  QList<int> indices
+  )
+{
+  std::string cmdName(FabricUI::DFG::DFGUICmd_ReorderNLSPorts::CmdName());
+  std::vector<std::string> args;
+
+  args.push_back(getDCCObjectNameFromBinding(binding));
+  args.push_back(ToStdString(execPath));
+  args.push_back(ToStdString(itemPath));
+
+  char n[64];
+  std::string indicesStr = "[";
+  for(int i=0;i<indices.size();i++)
+  {
+    if(i > 0)
+      indicesStr += ", ";
+    sprintf(n, "%d", indices[i]);
+    indicesStr += n;
+  }
+  indicesStr += "]";
+  args.push_back(indicesStr);
+
+  std::string output;
+  execDFGCmdViaDCC(cmdName, args, output);
+}
+
 std::string DFGUICmdHandlerDCC::getDCCObjectNameFromBinding(FabricCore::DFGBinding const &binding)
 {
   // try to get the item's name for this binding.
@@ -1257,6 +1316,8 @@ FabricUI::DFG::DFGUICmd *DFGUICmdHandlerDCC::createAndExecuteDFGCommand(std::str
   else if (in_cmdName == FabricUI::DFG::DFGUICmd_DismissLoadDiags   ::CmdName().c_str())    cmd = createAndExecuteDFGCommand_DismissLoadDiags   (in_args);
   else if (in_cmdName == FabricUI::DFG::DFGUICmd_AddBlock           ::CmdName().c_str())    cmd = createAndExecuteDFGCommand_AddBlock           (in_args);
   else if (in_cmdName == FabricUI::DFG::DFGUICmd_AddBlockPort       ::CmdName().c_str())    cmd = createAndExecuteDFGCommand_AddBlockPort       (in_args);
+  else if (in_cmdName == FabricUI::DFG::DFGUICmd_AddNLSPort         ::CmdName().c_str())    cmd = createAndExecuteDFGCommand_AddNLSPort         (in_args);
+  else if (in_cmdName == FabricUI::DFG::DFGUICmd_ReorderNLSPorts    ::CmdName().c_str())    cmd = createAndExecuteDFGCommand_ReorderNLSPorts       (in_args);
 
   // store the command's return value.
   s_lastReturnValue = "";
@@ -1362,6 +1423,11 @@ FabricUI::DFG::DFGUICmd *DFGUICmdHandlerDCC::createAndExecuteDFGCommand(std::str
                                                                                                 FabricUI::DFG::DFGUICmd_AddBlockPort &c = *(FabricUI::DFG::DFGUICmd_AddBlockPort *)cmd;
                                                                                                 s_lastReturnValue = c.getActualPortName();
                                                                                               }
+    else if (in_cmdName == FabricUI::DFG::DFGUICmd_AddNLSPort::         CmdName().c_str())    {
+                                                                                                FabricUI::DFG::DFGUICmd_AddNLSPort &c = *(FabricUI::DFG::DFGUICmd_AddNLSPort *)cmd;
+                                                                                                s_lastReturnValue = c.getActualPortName();
+                                                                                              }
+    else if (in_cmdName == FabricUI::DFG::DFGUICmd_ReorderNLSPorts::       CmdName().c_str()) { }
   }
 
   // done.
@@ -2979,6 +3045,118 @@ FabricUI::DFG::DFGUICmd_AddBlockPort *DFGUICmdHandlerDCC::createAndExecuteDFGCom
   return cmd;
 }
 
+FabricUI::DFG::DFGUICmd_AddNLSPort *DFGUICmdHandlerDCC::createAndExecuteDFGCommand_AddNLSPort(std::vector<std::string> &args)
+{
+  FabricUI::DFG::DFGUICmd_AddNLSPort *cmd = NULL;
+  if (args.size() == 8)
+  {
+    unsigned int ai = 0;
+
+    FabricCore::DFGBinding binding;
+    QString execPath;
+    FabricCore::DFGExec exec;
+    if (!DecodeExec(args, ai, binding, execPath, exec))
+      return cmd;
+
+    QString desiredPortName;
+    if (!DecodeString(args, ai, desiredPortName))
+      return cmd;
+
+    QString typeSpec;
+    if (!DecodeString(args, ai, typeSpec))
+      return cmd;
+
+    QString portToConnectWith;
+    if (!DecodeString(args, ai, portToConnectWith))
+      return cmd;
+
+    QString extDep;
+    if (!DecodeString(args, ai, extDep))
+      return cmd;
+
+    QString metaData;
+    if (!DecodeString(args, ai, metaData))
+      return cmd;
+
+    cmd = new FabricUI::DFG::DFGUICmd_AddNLSPort(binding,
+                                                 execPath,
+                                                 exec,
+                                                 desiredPortName,
+                                                 typeSpec,
+                                                 portToConnectWith,
+                                                 extDep,
+                                                 metaData);
+    try
+    {
+      cmd->doit();
+    }
+    catch(FabricCore::Exception e)
+    {
+      feLogError(e.getDesc_cstr() ? e.getDesc_cstr() : "\"\"");
+    }
+  }
+
+  return cmd;
+}
+
+FabricUI::DFG::DFGUICmd_ReorderNLSPorts *DFGUICmdHandlerDCC::createAndExecuteDFGCommand_ReorderNLSPorts(std::vector<std::string> &args)
+{
+  FabricUI::DFG::DFGUICmd_ReorderNLSPorts *cmd = NULL;
+  if (args.size() == 4)
+  {
+    unsigned int ai = 0;
+
+    FabricCore::DFGBinding binding;
+    QString execPath;
+    FabricCore::DFGExec exec;
+    if (!DecodeExec(args, ai, binding, execPath, exec))
+      return cmd;
+
+    QString itemPath;
+    if (!DecodeName(args, ai, itemPath))
+      return cmd;
+
+    QString indicesStr;
+    if (!DecodeName(args, ai, indicesStr))
+      return cmd;
+
+    QList<int> indices;
+    try
+    {
+      QByteArray indicesBytes( indicesStr.toUtf8() );
+      FTL::JSONStrWithLoc jsonStrWithLoc( indicesBytes.data() );
+      FTL::OwnedPtr<FTL::JSONArray> jsonArray(
+        FTL::JSONValue::Decode( jsonStrWithLoc )->cast<FTL::JSONArray>()
+        );
+      for( size_t i=0; i < jsonArray->size(); i++ )
+      {
+        indices.push_back ( jsonArray->get(i)->getSInt32Value() );
+      }
+    }
+    catch ( FabricCore::Exception e )
+    {
+      feLogError("indices argument not valid json.");
+      return cmd;
+    }
+
+    cmd = new FabricUI::DFG::DFGUICmd_ReorderNLSPorts(binding,
+                                                      execPath,
+                                                      exec,
+                                                      itemPath,
+                                                      indices);
+    try
+    {
+      cmd->doit();
+    }
+    catch(FabricCore::Exception e)
+    {
+      feLogError(e.getDesc_cstr() ? e.getDesc_cstr() : "\"\"");
+    }
+  }
+
+  return cmd;
+}
+
 
 
 /*-------------------------------------------------------------
@@ -3598,3 +3776,37 @@ __CanvasCmd_execute__
 #undef  __CanvasCmdClass__
 #undef  __CanvasCmdName__
 
+#define __CanvasCmdNumArgs__     7
+#define __CanvasCmdClass__  FabricCanvasAddNLSPort
+#define __CanvasCmdName__  "FabricCanvasAddNLSPort"
+__CanvasCmd_constructor_begin__
+  {
+    addArgStr("binding");
+    addArgStr("execPath");
+    addArgStr("desiredPortName");
+    addArgStr("typeSpec");
+    addArgStr("portToConnect");
+    addArgStr("extDep");
+    addArgStr("uiMetadata");
+  }
+__CanvasCmd_constructor_finish__
+__CanvasCmd_execute__
+#undef  __CanvasCmdNumArgs__
+#undef  __CanvasCmdClass__
+#undef  __CanvasCmdName__
+
+#define __CanvasCmdNumArgs__     4
+#define __CanvasCmdClass__  FabricCanvasReorderNLSPorts
+#define __CanvasCmdName__  "FabricCanvasReorderNLSPorts"
+__CanvasCmd_constructor_begin__
+  {
+    addArgStr("binding");
+    addArgStr("execPath");
+    addArgStr("itemPath");
+    addArgStr("indices");
+  }
+__CanvasCmd_constructor_finish__
+__CanvasCmd_execute__
+#undef  __CanvasCmdNumArgs__
+#undef  __CanvasCmdClass__
+#undef  __CanvasCmdName__
