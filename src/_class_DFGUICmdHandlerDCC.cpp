@@ -1194,7 +1194,6 @@ QString DFGUICmdHandlerDCC::dfgDoAddNLSPort(
   QString execPath,
   FabricCore::DFGExec const &exec,
   QString desiredPortName,
-  FabricCore::DFGPortType portType,
   QString typeSpec,
   QString portToConnect,
   QString extDep,
