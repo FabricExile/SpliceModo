@@ -3778,7 +3778,7 @@ __CanvasCmd_execute__
 
 #define __CanvasCmdNumArgs__     7
 #define __CanvasCmdClass__  FabricCanvasAddNLSPort
-#define __CanvasCmdName__  "FabricCanvasAddNLSPort"
+#define __CanvasCmdName__  "FabricCanvasAddLocal"
 __CanvasCmd_constructor_begin__
   {
     addArgStr("binding");
@@ -3797,7 +3797,7 @@ __CanvasCmd_execute__
 
 #define __CanvasCmdNumArgs__     4
 #define __CanvasCmdClass__  FabricCanvasReorderNLSPorts
-#define __CanvasCmdName__  "FabricCanvasReorderNLSPorts"
+#define __CanvasCmdName__  "FabricCanvasReorderLocals"
 __CanvasCmd_constructor_begin__
   {
     addArgStr("binding");
