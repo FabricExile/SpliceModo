@@ -153,6 +153,8 @@ void initialize()
     FabricCanvasDismissLoadDiags      :: initialize();
     FabricCanvasAddBlock              :: initialize();
     FabricCanvasAddBlockPort          :: initialize();
+    FabricCanvasAddNLSPort            :: initialize();
+    FabricCanvasReorderNLSPorts       :: initialize();
   }
 }
 
