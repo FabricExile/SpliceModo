@@ -1316,7 +1316,7 @@ FabricUI::DFG::DFGUICmd *DFGUICmdHandlerDCC::createAndExecuteDFGCommand(std::str
   else if (in_cmdName == FabricUI::DFG::DFGUICmd_AddBlock           ::CmdName().c_str())    cmd = createAndExecuteDFGCommand_AddBlock           (in_args);
   else if (in_cmdName == FabricUI::DFG::DFGUICmd_AddBlockPort       ::CmdName().c_str())    cmd = createAndExecuteDFGCommand_AddBlockPort       (in_args);
   else if (in_cmdName == FabricUI::DFG::DFGUICmd_AddNLSPort         ::CmdName().c_str())    cmd = createAndExecuteDFGCommand_AddNLSPort         (in_args);
-  else if (in_cmdName == FabricUI::DFG::DFGUICmd_ReorderNLSPorts    ::CmdName().c_str())    cmd = createAndExecuteDFGCommand_ReorderNLSPorts       (in_args);
+  else if (in_cmdName == FabricUI::DFG::DFGUICmd_ReorderNLSPorts    ::CmdName().c_str())    cmd = createAndExecuteDFGCommand_ReorderNLSPorts    (in_args);
 
   // store the command's return value.
   s_lastReturnValue = "";
@@ -1426,7 +1426,7 @@ FabricUI::DFG::DFGUICmd *DFGUICmdHandlerDCC::createAndExecuteDFGCommand(std::str
                                                                                                 FabricUI::DFG::DFGUICmd_AddNLSPort &c = *(FabricUI::DFG::DFGUICmd_AddNLSPort *)cmd;
                                                                                                 s_lastReturnValue = c.getActualPortName();
                                                                                               }
-    else if (in_cmdName == FabricUI::DFG::DFGUICmd_ReorderNLSPorts::       CmdName().c_str()) { }
+    else if (in_cmdName == FabricUI::DFG::DFGUICmd_ReorderNLSPorts::    CmdName().c_str())    { }
   }
 
   // done.
@@ -3047,7 +3047,7 @@ FabricUI::DFG::DFGUICmd_AddBlockPort *DFGUICmdHandlerDCC::createAndExecuteDFGCom
 FabricUI::DFG::DFGUICmd_AddNLSPort *DFGUICmdHandlerDCC::createAndExecuteDFGCommand_AddNLSPort(std::vector<std::string> &args)
 {
   FabricUI::DFG::DFGUICmd_AddNLSPort *cmd = NULL;
-  if (args.size() == 8)
+  if (args.size() == 7)
   {
     unsigned int ai = 0;
 
