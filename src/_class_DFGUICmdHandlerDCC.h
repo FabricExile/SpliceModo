@@ -768,7 +768,7 @@ public:
                             bool    basic_Enable    (CLxUser_Message &msg)      LXx_OVERRIDE    { return true;        }   \
                             void    cmd_Execute     (unsigned flags)            LXx_OVERRIDE;                             \
                           private:                                                                                        \
-                            void addArgStr(char *argName)  { dyna_Add(argName, LXsTYPE_STRING); }                         \
+                            void addArgStr(const char *argName)  { dyna_Add(argName, LXsTYPE_STRING); }                         \
                           };
 
 #define __CanvasCmdClass__   FabricCanvasRemoveNodes
