@@ -129,6 +129,14 @@ elif FABRIC_BUILD_OS == 'Darwin':
   env.Append(CCFLAGS = ['-Wno-unknown-pragmas'])
   env.Append(CCFLAGS = ['-Wno-parentheses'])
 
+if FABRIC_BUILD_OS == 'Windows':
+  if FABRIC_BUILD_TYPE == 'Release':
+    env.Append(LIBS = ['FabricServices-MSVC-'+env['MSVC_VERSION']+'-mt'])
+  else:
+    env.Append(LIBS = ['FabricServices-MSVC-'+env['MSVC_VERSION']+'-mtd'])
+else:
+  env.Append(LIBS = ['FabricServices'])
+
 target = 'FabricModo'
 
 modoModule = None
